@@ -49,6 +49,7 @@ pairPlotFig.fig.suptitle('RETURNS')
 Returns = Returns.drop(Returns.index[0])		# drop the first index as it is N/A
 print('Date of Maximum Return Value for each Bank\n', Returns.idxmax(),'\n\n Date of Minimum Return Value for each Bank \n',Returns.idxmin())
 print('\n\nStandard Deviation for each Bank over 10 year Span\n',Returns.std(),'\n\nStandard Deviation for each bank in 2015 \n',Returns.loc[Returns.index >= '2015-01-01'].std())
+
 '''
 		4 of the banks experienced their worst drop on the same day. This is ignauration day 01-20-2009. 
 		JPM recovered and had its best day after inaguration
@@ -85,23 +86,44 @@ CloseValues = pd.DataFrame()													# Empty DataFrame for Close Values
 for tick in tickers:																# for each bank
 	CloseValues[tick+' Close'] = bank_stocks[tick]['Close']							# place closing values in new dataframe
 
-fig4 = plt.figure(figsize=(15,5))													# Define new figure						
-fig4.suptitle('Banks', fontsize=16, fontweight='bold')								# Define figure title			
-ax = fig4.add_axes([.1,.15,.8,.7])													# Define Axes parameters						
+fig4 = plt.figure(figsize=(15,5))													# Define new figure													# Define figure title			
+ax = fig4.add_axes([.1,.15,.8,.75])													# Define Axes parameters						
 ax.grid(True, linestyle='-.')														# Define Grid					
-ax.set_title('2006-2016 Bank Stock Prices', fontweight='bold', fontsize=14)			# set the title xlabels and ylabels																
+ax.set_title('2006-2016 Bank Stock Prices', fontweight='bold', fontsize=16)			# set the title xlabels and ylabels																
 ax.set_xlabel('Year', fontsize=14)																			
 ax.set_ylabel('Closing Price', fontsize=14)																			
 ax.plot(CloseValues)																# plot the closing values on a line graph			
 fig4.legend(tickers, loc='upper right', bbox_to_anchor=(0.75,0.8))					# add a legend														
-plt.xticks(rotation=30)																# rotate the year on the graph			
-plt.show()																			
+plt.xticks(rotation=30)																# rotate the year on the graph																					
 
 
 ### Plot a 30 day moving averages for Bank of America in 2008
 
+fig5 = plt.figure(figsize=(12,6))													
+ax = fig5.add_axes([.1,.1,.8,.8])													# Define new figure and add axes
+CloseValues['BAC Close'][(CloseValues.index >= '2008-01-01') & \
+	(CloseValues.index < '2009-01-01')].plot(label='BAC Close')						# Extract closing values for Bank of America in 2008
+CloseValues['BAC Close'].ix['2008-01-01':'2009-01-01'].rolling(window=30).\
+	mean().plot(label='30 Day Moving Avg')											# Calculate moving average for 2008 BAC closing values. 
+ax.set_title('BAC 2008 30 Day Moving Average', fontweight='bold', fontsize=16)		# Set title xlabels and ylabels
+ax.set_xlabel('Month', fontsize=12)													
+ax.set_ylabel('Closing Price', fontsize=12)											
+plt.legend()																		# plot legend
+
+
 
 ### Plot a heatmap of the coorelation between each stocks closing price
 
+fig_heat = plt.figure(figsize=(15,5))												# make new figure to customize fig size
+ax_heat = fig_heat.add_axes([.1,.1,.8,.8])											# define axes of figure
+sns.heatmap(CloseValues.corr(),annot=True,cmap='RdBu_r', linewidth=.2)				# Heatmap of coorelations between each banks closing price
+sns.clustermap(CloseValues.corr(),annot=True,cmap='RdBu_r', linewidth=.2)			# Heatmap which clusters the coorelated values together.
+'''
+	We can infer here there are coorelations among a few of the banks. For example
+	Bank of America, Citi, and Morgan Stanely generally share the same trends. 
+	JP Morgan and Wells Fargo also share common trends, but all other combinations
+	show weak coorelation. 
 
+'''
 
+plt.show()
