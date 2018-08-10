@@ -105,7 +105,7 @@ CloseValues['BAC Close'][(CloseValues.index >= '2008-01-01') & \
 	(CloseValues.index < '2009-01-01')].plot(label='BAC Close')						# Extract closing values for Bank of America in 2008
 CloseValues['BAC Close'].ix['2008-01-01':'2009-01-01'].rolling(window=30).\
 	mean().plot(label='30 Day Moving Avg')											# Calculate moving average for 2008 BAC closing values. 
-ax.set_title('BAC 2008 30 Day Moving Average', fontweight='bold', fontsize=16)		# Set title xlabels and ylabels
+ax.set_title('BAC 2008: 30 Day Moving Average', fontweight='bold', fontsize=16)		# Set title xlabels and ylabels
 ax.set_xlabel('Month', fontsize=12)													
 ax.set_ylabel('Closing Price', fontsize=12)											
 plt.legend()																		# plot legend
@@ -114,10 +114,18 @@ plt.legend()																		# plot legend
 
 ### Plot a heatmap of the coorelation between each stocks closing price
 
-fig_heat = plt.figure(figsize=(15,5))												# make new figure to customize fig size
+fig_heat = plt.figure(figsize=(12,6))												# make new figure to customize fig size
 ax_heat = fig_heat.add_axes([.1,.1,.8,.8])											# define axes of figure
 sns.heatmap(CloseValues.corr(),annot=True,cmap='RdBu_r', linewidth=.2)				# Heatmap of coorelations between each banks closing price
-sns.clustermap(CloseValues.corr(),annot=True,cmap='RdBu_r', linewidth=.2)			# Heatmap which clusters the coorelated values together.
+ax_heat.set_title('Coorelation HeatMap', fontweight='bold', fontsize=16)			# Set title xlabels and ylabels
+# ax.set_xlabel('Month', fontsize=12)													
+# ax.set_ylabel('Closing Price', fontsize=12)											
+
+
+cluster = sns.clustermap(CloseValues.corr(),annot=True,cmap='RdBu_r', linewidth=.2).\
+	fig.suptitle('Coorelation Cluster Map',fontweight='bold',fontsize=16)			# Heatmap which clusters the coorelated values together.
+
+
 '''
 	We can infer here there are coorelations among a few of the banks. For example
 	Bank of America, Citi, and Morgan Stanely generally share the same trends. 
